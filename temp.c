@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include
+//include
 
 //calculate string length
 void my_strlen(char str[])
