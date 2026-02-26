@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-//SEED01-260220-44548
+
 // function for prime num
 void prime(int num)
 {
