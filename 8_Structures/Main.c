@@ -8,7 +8,11 @@ typedef struct {
     float cgpa;
 } Student;
 
-/* ---- Comparators ---- */
+void clear_input()
+{
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
 
 int cmp_roll(const void *a, const void *b)
 {
@@ -38,10 +42,13 @@ int main()
 {
     int n;
 
-    printf("Enter number of students: ");
-    if (scanf("%d", &n) != 1 || n <= 0) {
-        printf("Invalid number.\n");
-        return 1;
+    while (1) {
+        printf("Enter number of students: ");
+        if (scanf("%d", &n) == 1 && n > 0)
+            break;
+
+        printf("Invalid input. Enter a positive integer.\n");
+        clear_input();
     }
 
     Student s[n];
@@ -50,55 +57,83 @@ int main()
     {
         printf("\n--- Student %d ---\n", i + 1);
 
-        printf("Enter name: ");
-        scanf("%31s", s[i].name);
+        while (1) {
+            printf("Enter name: ");
+            if (scanf("%31s", s[i].name) == 1)
+                break;
 
-        /* ---- Roll number validation ---- */
-        int duplicate;
-        do {
-            duplicate = 0;
+            printf("Invalid input. Enter a valid name.\n");
+            clear_input();
+        }
+
+        // Roll number validation 
+        while (1) {
+            int duplicate = 0;
+
             printf("Enter roll number: ");
-            scanf("%d", &s[i].roll);
+            if (scanf("%d", &s[i].roll) != 1) {
+                printf("Invalid input. Enter integer only.\n");
+                clear_input();
+                continue;
+            }
+
+            if (s[i].roll <= 0) {
+                printf("Roll number must be positive.\n");
+                continue;
+            }
 
             for (int j = 0; j < i; j++) {
                 if (s[j].roll == s[i].roll) {
-                    printf("Error: Roll number already exists. Enter again.\n");
+                    printf("Roll number already exists.\n");
                     duplicate = 1;
                     break;
                 }
             }
-        } while (duplicate);
 
-        /* ---- CGPA validation ---- */
-        do {
+            if (!duplicate)
+                break;
+        }
+
+        //CGPA validation
+        while (1) {
             printf("Enter CGPA (0 - 10): ");
-            scanf("%f", &s[i].cgpa);
+            if (scanf("%f", &s[i].cgpa) != 1) {
+                printf("Invalid input. Enter decimal number only.\n");
+                clear_input();
+                continue;
+            }
 
-            if (s[i].cgpa < 0 || s[i].cgpa > 10)
-                printf("Error: CGPA must be between 0 and 10.\n");
+            if (s[i].cgpa < 0 || s[i].cgpa > 10) {
+                printf("CGPA must be between 0 and 10.\n");
+                continue;
+            }
 
-        } while (s[i].cgpa < 0 || s[i].cgpa > 10);
+            break;
+        }
     }
 
-    printf("\nChoose sorting option:\n");
-    printf("1. Sort by Roll\n");
-    printf("2. Sort by Name\n");
-    printf("3. Sort by CGPA\n");
-    printf("Enter choice: ");
-
     int choice;
-    scanf("%d", &choice);
+
+    while (1) {
+        printf("\nChoose sorting option:\n");
+        printf("1. Sort by Roll\n");
+        printf("2. Sort by Name\n");
+        printf("3. Sort by CGPA\n");
+        printf("Enter choice: ");
+
+        if (scanf("%d", &choice) == 1 && choice >= 1 && choice <= 3)
+            break;
+
+        printf("Invalid choice. Enter 1, 2 or 3.\n");
+        clear_input();
+    }
 
     if (choice == 1)
         qsort(s, n, sizeof(Student), cmp_roll);
     else if (choice == 2)
         qsort(s, n, sizeof(Student), cmp_name);
-    else if (choice == 3)
+    else
         qsort(s, n, sizeof(Student), cmp_cgpa);
-    else {
-        printf("Invalid choice.\n");
-        return 1;
-    }
 
     printf("\n--- Sorted Results ---\n");
     for (int i = 0; i < n; i++)
